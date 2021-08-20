@@ -13,21 +13,25 @@ namespace HomeWorkReflection
                 Console.WriteLine(assembly.FullName);
                 var myType = assembly.GetType("FiguresSerialize.Figure", false, true);
                 Object[] arguments = new object[] { "triangle", 3, 2 }; 
-                Object obj = Activator.CreateInstance(myType, arguments);
-                MethodInfo method = myType.GetMethod("Display");
-                method.Invoke(obj,null);
+                Object objTriangle = Activator.CreateInstance(myType, arguments);
+                Object objHexagon = Activator.CreateInstance(myType, new object[] {"Hexagon", 6,3 });
+                MethodInfo methodDisplay = myType.GetMethod("Display");
+                MethodInfo methodPerimeter = myType.GetMethod("Perimeter");
+                Object[] setSideLenghtArgs = new object[] { 33 };
+                MethodInfo methodSetSideLenght = myType.GetMethod("SetSideLenght");
+                //  вызов метода без параметров
+                methodDisplay.Invoke(objTriangle,null);
+                methodDisplay.Invoke(objHexagon,null);
+                methodPerimeter.Invoke(objHexagon, null);
+                //  вызов метода с параметрами
+                methodSetSideLenght.Invoke(objHexagon, setSideLenghtArgs);
+                methodDisplay.Invoke(objHexagon,null);
+                //  Чтение и запись закрытого свойства
                 PropertyInfo closedProperty = myType.GetProperty("closedProperty",BindingFlags.Instance | BindingFlags.NonPublic);
-                
-                if (closedProperty !=null)
-                {
-                    Console.WriteLine($"Closed Property: {closedProperty.Name}");
-                }
-                else
-                {
-                    Console.WriteLine("Closed property not found!");
-                }
-                closedProperty.SetValue(obj, "Set by Reflection");
-                method.Invoke(obj,null);
+                var closedPropertyValue = closedProperty.GetValue(objTriangle);
+                Console.WriteLine($"Closed Property: {closedProperty.Name} = {closedPropertyValue}");
+                closedProperty.SetValue(objTriangle, "Set by Reflection");
+                methodDisplay.Invoke(objTriangle,null);
             }
             catch (Exception e)
             {
